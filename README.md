@@ -2,8 +2,12 @@
 
 # Part 0 – Prerequisites
 
-Output file: [outputs/part0-cluster-info.txt](outputs/part0-cluster-info.txt)
-Output file: [outputs/part0-nodes.txt](outputs/part0-nodes.txt)
+Output file -
+[outputs/part0-cluster-info.txt](outputs/part0-cluster-info.txt)
+[outputs/part0-nodes.txt](outputs/part0-nodes.txt)
+Screenshot -
+ [screenshots/cluster-info-nodes.png](screenshots/cluster-info-nodes.png)
+ [screenshots/create_namespace.png](screenshots/create_namespace.png)
 
 
 
