@@ -158,14 +158,41 @@ Ater the update **two ReplicatSet**
 - One active ReplicaSet managing the 5 running Pods
 
 ### Why does Kubernetes create a new ReplicaSet?
-Kubernetes creates a new ReplicaSet whenever the Deployment template changes (for example, updating the container image).
+Kubernetes creates a new ReplicaSet to manage a new version of the Deployment during rolling updates and to allow rollback.
 
-This is done to perform a **rolling update**, meaning:
-
-- New Pods are created gradually using the new ReplicaSet
-- Old Pods are terminated gradually
-- The old ReplicaSet is kept for rollback in case the update fails
 
 ## Part 5 – Service Types
+**Commands:**
+```bash
+kubectl apply -f .\internal_service.yaml
+kubectl apply -f .\extanal_service.yaml
+kubectl apply -f .\loadBalancer_service.yaml
+kubectl get svc -n dev
+```
+### Output 
+```text
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl apply -f .\internal_service.yaml
+service/app-service created
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl apply -f .\extanal_service.yaml
+service/app-nodeport created
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl apply -f .\loadBalancer_service.yaml
+service/app-lb created
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl get svc -n dev
+NAME           TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+app-lb         LoadBalancer   10.110.125.158   <pending>     80:30365/TCP   8s
+app-nodeport   NodePort       10.109.151.131   <none>        80:30080/TCP   12s
+app-service    ClusterIP      10.110.63.0      <none>        80/TCP         16s
+
+```
+### Screenshots
+![deployment scale](screenshots/k8-services.png)
+
+## Which Service is internal only?
+The **ClusterIP** Service is internal-only
+It is accessible only fot the Kubernetes cluster and cannot be reached from outside.
+
+## Which Service is best for production?
+or 
+- **ClusterIP + Ingress** (recommended for HTTP applications)
 
 

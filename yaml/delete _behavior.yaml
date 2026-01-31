@@ -18,3 +18,21 @@ spec:
           image: nginx
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          env:
+            - name: ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: ENV
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: password
