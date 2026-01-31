@@ -251,7 +251,7 @@ password
 ```
 
 ### Screenshots
-![Create ConfigMap Secret](screenshots/env_proof.png)
+![Create ConfigMap Secret](screenshots/create_configmap_secret.png)
 ![ENV proof](screenshots/env_proof.png)
 
 
@@ -278,8 +278,13 @@ yes
 
 ### Why is RBAC namespace-scoped?
 RBAC is namespace-scoped to limit permissions to a specific namespace and prevent unintended
-
 ### What security principle does RBAC enforce?
 RBAC enforces the principle of least privilege, granting only the minimum permissions required
 
  ## Part 9 – Production Thinking
+
+
+## What changes between dev and prod?
+In dev, resource limits/requests are often not set to allow flexibility, while in production they are enforced along with multiple replicas and controlled rollout strategies for stability.
+## Why are limits mandatory in production?
+Because without limits, a pod can consume too much CPU or memory and impact other workloads, risking cluster instability and outages.
