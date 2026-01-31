@@ -1,8 +1,6 @@
 # DevExpertK8_Class2
 
 ## Part 0 – Prerequisites
-
-
 **Commands:**
 ```bash
 kubectl cluster-info
@@ -192,7 +190,96 @@ The **ClusterIP** Service is internal-only
 It is accessible only fot the Kubernetes cluster and cannot be reached from outside.
 
 ## Which Service is best for production?
+
+- **LoadBalancer** (in cloud environments)  
 or 
 - **ClusterIP + Ingress** (recommended for HTTP applications)
 
+###  Part 6 – Ingress
+**Commands:**
+```bash
+kubectl apply -f .\ingress.yaml
+kubectl apply -f .\ingress.yaml
+```
+### Output 
+```text
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl apply -f .\ingress.yaml
+ingress.networking.k8s.io/app-ingress created
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl get ing -n dev
+NAME          CLASS    HOSTS        ADDRESS   PORTS   AGE
+app-ingress   <none>   demo.local             80      9s
+```
+### Screenshots
+![deployment scale](screenshots/k8-ingress.png)
 
+### Does Ingress work without an Ingress Controller?
+No. Ingress is only a rule definition and needs an Ingress Controller (NGINX) to work
+
+### Why not expose every Service directly?
+Because it increases security risks and complexity.  
+Ingress provides one centralized entry point for routing and TLS
+
+##  Part 7 – ConfigMap & Secret
+**Commands:**
+```bash
+kubectl apply -f .\secret.yaml
+kubectl apply -f .\configmap.yaml
+kubectl apply -f '.\delete _behavior.yaml'
+kubectl exec -n dev app-deployment -- printenv ENV
+kubectl exec -n dev app-deployment -- printenv PASSWORD
+
+```
+### Output 
+```text
+kubectl get secret,configmap,pods -n dev
+NAME                TYPE     DATA   AGE
+secret/app-secret   Opaque   1      8m39s
+
+NAME                         DATA   AGE
+configmap/app-config         2      8m35s
+configmap/kube-root-ca.crt   1      2d3h
+
+NAME                                  READY   STATUS    RESTARTS   AGE
+pod/app-deployment-7c58b79fff-qhzxd   1/1     Running   0          7m51s
+pod/app-deployment-7c58b79fff-ssg7d   1/1     Running   0          7m48s
+pod/app-deployment-7c58b79fff-z76s5   1/1     Running   0          7m57s
+
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl exec -n dev app-deployment-7c58b79fff-qhzxd -- printenv ENV
+dev
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl exec -n dev app-deployment-7c58b79fff-qhzxd -- printenv PASSWORD
+password
+```
+
+### Screenshots
+![Create ConfigMap Secret](screenshots/env_proof.png)
+![ENV proof](screenshots/env_proof.png)
+
+
+##  Part 8 – RBAC & Namespace Isolation
+**Commands:**
+```bash
+kubectl apply -f .\Service_ACC.yaml
+kubectl apply -f .\Role.yaml
+ kubectl apply -f .\Rolebinding.yaml
+kubectl get role pod-reader -n dev
+kubectl get rolebinding pod-reader-binding -n dev
+kubectl auth can-i get pods 
+  --as=system:serviceaccount:dev:app-sa 
+  -n dev
+  ```
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl get role pod-reader -n dev
+NAME         CREATED AT
+pod-reader   2026-01-31T20:05:30Z
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl get rolebinding pod-reader-binding -n dev
+NAME                 ROLE              AGE
+pod-reader-binding   Role/pod-reader   104s
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl auth can-i get pods --as=system:serviceaccount:dev:app-sa -n dev    
+yes
+
+### Why is RBAC namespace-scoped?
+RBAC is namespace-scoped to limit permissions to a specific namespace and prevent unintended
+
+### What security principle does RBAC enforce?
+RBAC enforces the principle of least privilege, granting only the minimum permissions required
+
+ ## Part 9 – Production Thinking
