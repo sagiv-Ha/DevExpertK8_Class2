@@ -282,9 +282,96 @@ RBAC is namespace-scoped to limit permissions to a specific namespace and preven
 RBAC enforces the principle of least privilege, granting only the minimum permissions required
 
  ## Part 9 – Production Thinking
-
+ **Commands:**
+```bash
+kubectl apply -f .\delete _behavior.yaml
+kubectl get deploy app-deployment -n dev
+```
+```text
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl apply -f '.\delete _behavior.yaml'
+deployment.apps/app-deployment configured
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl get deploy app-deployment -n dev
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+app-deployment   3/3     3            3           176m
+```
+### Screenshots
+![Prod_resources](screenshots/Prod_resources.png)
 
 ## What changes between dev and prod?
 In dev, resource limits/requests are often not set to allow flexibility, while in production they are enforced along with multiple replicas and controlled rollout strategies for stability.
 ## Why are limits mandatory in production?
 Because without limits, a pod can consume too much CPU or memory and impact other workloads, risking cluster instability and outages.
+
+ ## **Bonus**
+
+ ```bash
+kubectl delete -f .\
+kubectl get all -n dev
+kubectl apply -f full_deployment.yaml
+kubectl get all -n dev
+```
+###output 
+```text 
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl delete -f .\
+role.rbac.authorization.k8s.io "pod-reader" deleted from dev namespace
+rolebinding.rbac.authorization.k8s.io "pod-reader-binding" deleted from dev namespace
+serviceaccount "app-sa" deleted from dev namespace
+configmap "app-config" deleted from dev namespace
+deployment.apps "app-deployment" deleted from dev namespace
+service "app-nodeport" deleted from dev namespace
+namespace "dev" deleted
+secret "app-secret" deleted from dev namespace
+service "app-service" deleted from dev namespace
+ingress.networking.k8s.io "app-ingress" deleted from dev namespace
+service "app-lb" deleted from dev namespace
+namespace "dev" deleted
+Error from server (NotFound): error when deleting "create_pod.yaml": pods "demo-pod" not found
+Error from server (NotFound): error when deleting "full_deployment.yaml": serviceaccounts "app-sa" not found
+Error from server (NotFound): error when deleting "full_deployment.yaml": configmaps "app-config" not found
+Error from server (NotFound): error when deleting "full_deployment.yaml": roles.rbac.authorization.k8s.io "pod-reader" not found
+Error from server (NotFound): error when deleting "full_deployment.yaml": rolebindings.rbac.authorization.k8s.io "pod-reader-binding" not found
+Error from server (NotFound): error when deleting "full_deployment.yaml": deployments.apps "app-deployment" not found
+Error from server (NotFound): error when deleting "full_deployment.yaml": services "app-nodeport" not found
+Error from server (NotFound): error when deleting "ingress.yaml": ingresses.networking.k8s.io "app-ingress" not found
+Error from server (NotFound): error when deleting "internal_service.yaml": services "app-service" not found
+Error from server (NotFound): error when deleting "secret.yaml": secrets "app-secret" not found
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl get all -n dev
+No resources found in dev namespace.
+
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl apply -f .\full_deployment.yaml 
+namespace/dev created
+serviceaccount/app-sa created
+configmap/app-config created
+secret/app-secret created
+role.rbac.authorization.k8s.io/pod-reader created
+rolebinding.rbac.authorization.k8s.io/pod-reader-binding created
+deployment.apps/app-deployment created
+service/app-service created
+service/app-nodeport created
+ingress.networking.k8s.io/app-ingress created
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl get all -n dev
+NAME                                  READY   STATUS              RESTARTS   AGE
+pod/app-deployment-7c858774b9-5qt8p   1/1     Running             0          6s
+pod/app-deployment-7c858774b9-7n56f   0/1     ContainerCreating   0          6s
+pod/app-deployment-7c858774b9-npbwj   1/1     Running             0          6s
+
+NAME                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+service/app-nodeport   NodePort    10.99.232.121    <none>        80:30080/TCP   6s
+service/app-service    ClusterIP   10.106.149.114   <none>        80/TCP         6s
+
+NAME                             READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/app-deployment   2/3     3            2           6s
+
+NAME                                        DESIRED   CURRENT   READY   AGE
+replicaset.apps/app-deployment-7c858774b9   3         3         2       6s
+PS C:\Users\sagiv\Devops_Course\DevExpertK8_Class2\yaml> kubectl get ing -n dev
+NAME          CLASS    HOSTS        ADDRESS   PORTS   AGE
+app-ingress   <none>   demo.local             80      12s
+```
+### Screenshots
+- Clean all
+![Clean all](screenshots/delete_all.png)
+- Deploy full yaml 
+![Full deployment](screenshots/Full_deployment_Yaml.png)
+
+## **THE END**
